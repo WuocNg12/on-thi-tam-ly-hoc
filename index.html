@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn thi Tâm lý học hành vi · DNTU</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-left">
+                <span class="course-label">DNTU <span>/</span> 25DTN</span>
+                <h1>Tâm lý học hành vi</h1>
+                <p class="subtitle">Ôn tập trắc nghiệm và lý thuyết trọng tâm</p>
+            </div>
+            <div class="header-right">
+                <button class="google-btn" id="btn-login" onclick="window.handleLogin()">
+                    <svg id="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    <img id="user-avatar" src="" alt="avatar">
+                    <span id="login-text">Đăng nhập</span>
+                </button>
+                <span class="login-hint" id="login-hint">Đăng nhập để xếp hạng</span>
+            </div>
+        </header>
+
+        <nav class="mode-selector" aria-label="Chế độ ôn tập">
+            <button class="mode-btn active" id="btn-practice" onclick="window.switchMode('practice')">Luyện tập</button>
+            <button class="mode-btn" id="btn-exam" onclick="window.switchMode('exam')">Thi thử</button>
+            <button class="mode-btn" id="btn-theory" onclick="window.showTheory()">Ôn lý thuyết</button>
+            <button class="mode-btn" onclick="window.openModal('data-modal')">Xếp hạng &amp; lịch sử</button>
+            <button class="mode-btn admin-btn" id="btn-admin" onclick="window.openAdminPanel()" style="margin-left: auto;">Quản trị</button>
+        </nav>
+
+        <section id="theory-panel" class="quiz-card theory-card" hidden aria-labelledby="theory-heading">
+            <div class="theory-heading"><div><h2 id="theory-heading">Ôn lý thuyết</h2><p id="theory-progress"></p></div>
+                <a class="source-link" id="pdf-full" href="Lý thuyết trọng tâm Tâm lý học hành vi.pdf" target="_blank" rel="noopener">Mở PDF gốc</a></div>
+            <div class="theory-tools">
+                <label>Bài học<select id="chapter-select"></select></label>
+                <label>Tìm trong tài liệu<input type="search" id="theory-search" placeholder="Nhập khái niệm, ví dụ…" autocomplete="off"></label>
+            </div>
+            <div id="theory-list"></div>
+        </section>
+
+        <div class="quiz-card" id="quiz-card">
+
+            <button class="admin-edit-btn" id="btn-edit-current" onclick="window.editCurrentQuestion()">Sửa câu này</button>
+
+            <div class="practice-tools" id="practice-tools">
+                <label for="practice-scope">Phạm vi luyện tập</label>
+                <select id="practice-scope"><option value="all">Toàn bộ câu hỏi</option></select>
+            </div>
+            <div class="quiz-header">
+                <span class="progress" id="progress">1 / ...</span>
+                <button class="shuffle-control" id="btn-shuffle" aria-pressed="false" onclick="window.toggleShuffle()">Đảo câu hỏi</button>
+                <div class="jump-container">
+                    <input type="number" id="jump-input" class="jump-input" min="1" aria-label="Số thứ tự câu muốn đến" placeholder="Câu">
+                    <button class="action-btn" style="padding: 6px 12px; font-size: 0.85rem;" onclick="window.jumpToQuestion()">Đến</button>
+                </div>
+                <span class="timer" id="timer">00:00</span>
+            </div>
+            <div class="exam-info" id="exam-info"><span id="exam-info-text"></span><button class="info-link" onclick="window.resetAllExams()">Làm lại toàn bộ đề thi thử</button></div>
+
+            <div class="meter"><div id="meter-fill"></div></div>
+            <p class="question-source" id="question-source"></p>
+            <h2 class="question" id="question">Đang mở câu hỏi…</h2>
+            <div class="options" id="options"></div>
+            <div id="practice-review"><div class="practice-actions">
+                <button type="button" id="review-toggle" class="simple-link" aria-expanded="false">Xem lời giải</button>
+                <label><input type="checkbox" id="auto-next" checked> Tự chuyển khi đúng</label>
+            </div><div id="review-content" class="review-content" hidden></div></div>
+            <p class="feedback" id="feedback" role="status"></p>
+
+            <div class="controls">
+                <button class="action-btn" id="btn-prev" onclick="window.prevQuestion()">Quay lại</button>
+                <button class="action-btn primary-btn" id="btn-next" onclick="window.nextQuestion()">Tiếp tục</button>
+            </div>
+        </div>
+
+        <div class="quiz-card results-container" id="results-card">
+            <h2 style="margin-top:0; font-weight:600;">Hoàn thành</h2>
+            <div class="score-display" id="score-display">0/0</div>
+            <p id="result-message" style="font-size: 1rem; color: #475569; margin-bottom: 30px;"></p>
+            <div class="result-actions">
+                <button class="action-btn" id="btn-view-wrong" onclick="window.showWrongTab()">Xem câu sai</button>
+                <button class="action-btn primary-btn" id="btn-restart" onclick="window.restartQuiz()">Làm lại</button>
+                <button class="action-btn" onclick="window.resetAllExams()">Làm lại toàn bộ đề thi thử</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Modal (Leaderboard, History, Wrong) -->
+    <div class="modal" id="data-modal">
+        <div class="modal-content">
+            <button aria-label="Đóng" class="close-btn" onclick="window.closeModal('data-modal')">✕</button>
+            <div class="tabs">
+                <button class="tab-btn active" id="tab-btn-leaderboard" onclick="window.switchTab('leaderboard-tab', this, 'data-modal')">Xếp hạng</button>
+                <button class="tab-btn" id="tab-btn-history" onclick="window.switchTab('history-tab', this, 'data-modal')">Lịch sử</button>
+                <button class="tab-btn" id="tab-btn-wrong" onclick="window.switchTab('wrong-tab', this, 'data-modal')">Câu sai</button>
+            </div>
+
+            <div id="leaderboard-tab" class="tab-content active">
+                <div id="leaderboard-list"><p class="empty-state">Đang tải...</p></div>
+            </div>
+            <div id="history-tab" class="tab-content">
+                <div id="history-list"><p class="empty-state">Chưa có dữ liệu.</p></div>
+            </div>
+            <div id="wrong-tab" class="tab-content">
+                <div id="wrong-list"><p class="empty-state">Chưa có dữ liệu.</p></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div class="modal" id="admin-modal">
+        <div class="modal-content large">
+            <button aria-label="Đóng" class="close-btn" onclick="window.closeModal('admin-modal')">✕</button>
+            <h2 style="margin-top:0; margin-bottom: 20px; font-weight:600; color: #991b1b;">Quản trị Kho câu hỏi</h2>
+
+            <div class="tabs" style="margin-bottom: 16px;">
+                <button class="tab-btn active" onclick="window.switchTab('admin-list-tab', this, 'admin-modal')">Danh sách câu hỏi</button>
+                <button class="tab-btn" id="tab-btn-editor" onclick="window.switchTab('admin-edit-tab', this, 'admin-modal'); window.prepareAddQuestion();">Thêm mới</button>
+                <button class="tab-btn" onclick="window.pushInitData()" style="margin-left: auto; color: #2563eb;">Khôi phục bộ gốc</button>
+            </div>
+
+            <!-- Danh sách câu hỏi -->
+            <div id="admin-list-tab" class="tab-content active">
+                <div style="margin-bottom: 12px; display: flex; gap: 8px;">
+                    <input type="text" id="admin-search" class="form-control" placeholder="Tìm kiếm câu hỏi..." onkeyup="window.filterAdminQuestions()">
+                </div>
+                <div id="admin-q-list" style="max-height: 400px; overflow-y: auto; border: 1px solid var(--border); border-radius: 4px;">
+                    <!-- Danh sách gen bằng JS -->
+                </div>
+            </div>
+
+            <!-- Trình chỉnh sửa -->
+            <div id="admin-edit-tab" class="tab-content">
+                <input type="hidden" id="edit-doc-id" value="">
+
+                <div class="form-group">
+                    <label>Nội dung câu hỏi:</label>
+                    <textarea id="edit-q-text" class="form-control" placeholder="Nhập câu hỏi..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Các lựa chọn (Tick vào ô tròn để chọn đáp án đúng):</label>
+                    <div id="edit-options-container">
+                        <div class="option-input-group">
+                            <input type="radio" name="correct_opt" value="0" checked>
+                            <input type="text" class="form-control edit-opt-val" placeholder="Lựa chọn 1">
+                        </div>
+                        <div class="option-input-group">
+                            <input type="radio" name="correct_opt" value="1">
+                            <input type="text" class="form-control edit-opt-val" placeholder="Lựa chọn 2">
+                        </div>
+                        <div class="option-input-group">
+                            <input type="radio" name="correct_opt" value="2">
+                            <input type="text" class="form-control edit-opt-val" placeholder="Lựa chọn 3">
+                        </div>
+                        <div class="option-input-group">
+                            <input type="radio" name="correct_opt" value="3">
+                            <input type="text" class="form-control edit-opt-val" placeholder="Lựa chọn 4">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-actions">
+                    <button class="btn-danger" id="btn-del-q" onclick="window.deleteQuestion()" style="margin-right: auto; display: none;">Xóa câu này</button>
+                    <button class="action-btn" onclick="window.switchTab('admin-list-tab', document.querySelector('#admin-modal .tabs .tab-btn'), 'admin-modal')">Hủy</button>
+                    <button class="action-btn primary-btn" onclick="window.saveQuestion()">Lưu câu hỏi</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="content/questions.js"></script>
+    <script src="content/theory.js"></script>
+    <script src="theory-reader.js"></script>
+    <script src="quiz.js"></script>
+</body>
+</html>

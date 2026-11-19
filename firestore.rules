@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Preserve the project's existing permissions for the other course collections.
+    match /{collection}/{document=**} {
+      allow read: if !(collection in ['tamlyhoc_questions', 'tamlyhoc_leaderboard']);
+      allow write: if !(collection in ['tamlyhoc_questions', 'tamlyhoc_leaderboard']) && request.auth != null;
+    }
+
+    function isCourseAdmin() {
+      return request.auth != null && request.auth.token.email_verified == true
+        && request.auth.token.email == 'quocaaaa120@gmail.com';
+    }
+
+    match /tamlyhoc_questions/{id} {
+      allow read: if true;
+      allow create, update, delete: if isCourseAdmin();
+    }
+
+    match /tamlyhoc_leaderboard/{id} {
+      allow read: if true;
+      allow create: if request.auth != null && validScore(request.resource.data);
+    }
+
+    function validScore(d) {
+      return d.keys().hasOnly(['uid','name','photoURL','score','total','timeSeconds','timeStr','timestamp'])
+        && d.uid == request.auth.uid
+        && d.name is string && d.name.size() <= 160
+        && d.photoURL is string && d.photoURL.size() <= 2048
+        && d.total is int && d.total > 0 && d.total <= 50
+        && d.score is int && d.score >= 0 && d.score <= d.total
+        && d.timeSeconds is int && d.timeSeconds >= 0
+        && d.timeStr is string && d.timeStr.size() <= 16
+        && d.timestamp == request.time;
+    }
+  }
+}

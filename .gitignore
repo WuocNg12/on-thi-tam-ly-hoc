@@ -1,0 +1,4 @@
+*.docx
+~$*
+.firebase/
+firebase-debug*.log
