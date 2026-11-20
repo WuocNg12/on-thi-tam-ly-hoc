@@ -216,6 +216,17 @@ input[type=checkbox], input[type=radio] { accent-color: var(--primary); }
 .theory-tools { margin: 20px 0; }
 .theory-tools label { display: grid; gap: 5px; flex: 1 1 230px; }
 .theory-tools select, .theory-tools input { width: 100%; font-weight: 400; }
+.podcast { background: #edf5ef; border: 1px solid #cfdfd1; border-radius: 12px; padding: clamp(14px, 3vw, 23px); }
+.podcast-heading, .podcast-tools { display: flex; align-items: center; justify-content: space-between; gap: 8px 18px; flex-wrap: wrap; }
+.podcast-heading h3 { margin: 0; font-size: 1.2rem; }
+.podcast-meta { color: var(--muted); margin: 5px 0 14px; font-size: .9rem; }
+.podcast audio { display: block; width: 100%; margin: 0 0 12px; }
+.podcast-tools { justify-content: flex-start; font-size: .9rem; }
+.podcast-tools label { display: inline-flex; align-items: center; gap: 5px; }
+.podcast-tools select { min-height: 32px; padding-top: 2px; padding-bottom: 2px; }
+.podcast details { border-top: 1px solid var(--border); margin-top: 14px; padding-top: 11px; }
+.podcast summary { cursor: pointer; color: var(--primary); font-weight: 600; }
+.podcast .reading { padding-bottom: 0; }
 #theory-list h3 { font-size: 1.19rem; margin: 22px 0 10px; }
 .theory-section { border-top: 1px solid var(--border); }
 .theory-section > summary { padding: 13px 0; cursor: pointer; font-weight: 650; }

@@ -85,7 +85,7 @@ async function connectFirebase() {
                 isShuffled = !!lsGet('shuffle', false);
                 autoNext.checked = lsGet('autoNext', true);
                 window.switchMode(currentMode);
-                if (wasReading) window.showTheory();
+                if (wasReading) window.showTheory(linkedPodcastNumber());
                 renderLocalData();
             }
         });
@@ -278,7 +278,7 @@ window.toggleShuffle = () => {
     window.switchMode(currentMode);
 };
 
-window.showTheory = () => {
+window.showTheory = (chapter) => {
     clearTimeout(advanceTimeout);
     if (!viewingTheory) saveExamProgress();
     viewingTheory = true;
@@ -287,13 +287,14 @@ window.showTheory = () => {
     resultsCard.style.display = 'none';
     document.getElementById('theory-panel').hidden = false;
     for (const name of ['practice','exam','theory']) document.getElementById('btn-' + name).classList.toggle('active', name === 'theory');
-    window.theoryReader.open();
+    window.theoryReader.open(chapter);
 };
 window.switchMode = (mode) => {
     if(dbData.length === 0) return;
 
     clearTimeout(advanceTimeout);
     if (mode === 'practice' && !viewingTheory) saveExamProgress();
+    if (viewingTheory) window.theoryReader.close();
     viewingTheory = false;
     document.getElementById('theory-panel').hidden = true;
     document.getElementById('btn-theory').classList.remove('active');
@@ -815,4 +816,14 @@ isShuffled = lsGet('shuffle', false);
 autoNext.checked = lsGet('autoNext', true);
 populateScope();
 window.switchMode('practice');
+function linkedPodcastNumber() {
+    const match = location.hash.match(/^#podcast(?:-([1-9]))?$/);
+    return match ? Number(match[1] || 1) : undefined;
+}
+function openLinkedPodcast() {
+    const number = linkedPodcastNumber();
+    if (number !== undefined) window.showTheory(number);
+}
+openLinkedPodcast();
+window.addEventListener('hashchange', openLinkedPodcast);
 connectFirebase();

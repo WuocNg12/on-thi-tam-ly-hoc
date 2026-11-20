@@ -44,6 +44,24 @@
                 <label>Bài học<select id="chapter-select"></select></label>
                 <label>Tìm trong tài liệu<input type="search" id="theory-search" placeholder="Nhập khái niệm, ví dụ…" autocomplete="off"></label>
             </div>
+            <button type="button" id="podcast-start" class="action-btn">Nghe podcast từ Bài 1</button>
+            <section id="podcast" class="podcast" aria-labelledby="podcast-title" hidden>
+                <div class="podcast-heading">
+                    <h3 id="podcast-title"></h3>
+                    <a id="podcast-download" class="source-link" download>Tải MP3</a>
+                </div>
+                <p id="podcast-meta" class="podcast-meta"></p>
+                <audio id="podcast-audio" controls controlslist="noplaybackrate" preload="metadata" aria-labelledby="podcast-title"></audio>
+                <div class="podcast-tools">
+                    <label>Tốc độ <select id="podcast-rate">
+                        <option value="0.85">0,85×</option><option value="1" selected>1×</option>
+                        <option value="1.15">1,15×</option><option value="1.25">1,25×</option><option value="1.5">1,5×</option>
+                    </select></label>
+                    <label><input type="checkbox" id="podcast-continuous" checked> Tự phát bài tiếp</label>
+                </div>
+                <p id="podcast-message" class="feedback" role="status"></p>
+                <details id="podcast-script"><summary>Xem lời podcast</summary><div class="reading" id="podcast-transcript"></div></details>
+            </section>
             <div id="theory-list"></div>
         </section>
 
@@ -181,6 +199,7 @@
 
     <script src="content/questions.js"></script>
     <script src="content/theory.js"></script>
+    <script src="content/podcasts.js"></script>
     <script src="theory-reader.js"></script>
     <script src="quiz.js"></script>
 </body>
